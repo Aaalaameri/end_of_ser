@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة مكافأة نهاية الخدمة - نظام العمل السعودي</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc;
+        }
+        .container {
+            max-width: 800px;
+        }
+        .result-box {
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .hidden {
+            display: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #e2e8f0;
+        }
+        th, td {
+            padding: 8px 12px;
+            text-align: right;
+        }
+        th {
+            background-color: #edf2f7;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+        }
+        .label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .input, .select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.25rem;
+        }
+        .button {
+            background-color: #4299e1;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #3182ce;
+        }
+        .developer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        .dev-icon {
+            margin-left: 0.5rem;
+            color: #4299e1;
+        }
+        @media print {
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="py-8 px-4">
+    <div class="container mx-auto bg-white shadow-lg rounded-lg p-6">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">حاسبة مكافأة نهاية الخدمة</h1>
+            <p class="text-gray-600 mb-4">الزملاء بوزارة الصحة تحسب الحاسبة لمكافأة  موظفين برنامج التشغيل  الذاتي </p>
+            <p class="text-gray-600">وفق نظام العمل السعودي</p>
+        </header>
+
+        <section class="mb-8">
+            <div class="bg-blue-50 p-4 rounded-md mb-6">
+                <h2 class="text-xl font-bold text-blue-800 mb-2">معلومات الموظف والعقد</h2>
+                
+                <div class="input-group">
+                    <label class="label" for="salary">الراتب الشهري (ريال سعودي)</label>
+                    <input type="number" id="salary" class="input" placeholder="أدخل الراتب الشهري" min="0" required>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="input-group">
+                        <label class="label" for="startDate">تاريخ بداية العمل</label>
+                        <input type="date" id="startDate" class="input" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="label" for="endDate">تاريخ نهاية العمل</label>
+                        <input type="date" id="endDate" class="input" required>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="label" for="terminationType">نوع إنهاء العقد</label>
+                    <select id="terminationType" class="select">
+                        <option value="employer">إنهاء من قبل صاحب العمل / عدم تجديد العقد</option>
+                        <option value="resignation">استقالة</option>
+                    </select>
+                </div>
+                
+                <button id="calculate" class="button w-full mt-4">احسب المكافأة</button>
+            </div>
+        </section>
+
+        <section id="results" class="hidden">
+            <div class="bg-blue-100 p-6 rounded-lg mb-6">
+                <h2 class="text-xl font-bold text-blue-800 mb-4">ملخص الخدمة</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                    <div class="bg-white p-4 rounded-md shadow">
+                        <div class="text-lg font-bold text-gray-700" id="yearsOfService">0</div>
+                        <div class="text-gray-600">سنوات</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-md shadow">
+                        <div class="text-lg font-bold text-gray-700" id="monthsOfService">0</div>
+                        <div class="text-gray-600">شهور</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-md shadow">
+                        <div class="text-lg font-bold text-gray-700" id="daysOfService">0</div>
+                        <div class="text-gray-600">أيام</div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 bg-white p-6 rounded-md shadow text-center">
+                    <h3 class="text-lg text-gray-700 mb-2">إجمالي مكافأة نهاية الخدمة</h3>
+                    <div class="text-3xl font-bold text-blue-600" id="totalEOS">0 ريال</div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg border border-gray-200 mb-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">تفاصيل الحساب</h2>
+                <div id="calculationDetails" class="text-gray-700"></div>
+            </div>
+            
+            <div class="bg-yellow-50 p-6 rounded-lg border border-yellow-200 mb-6">
+                <h2 class="text-xl font-bold text-yellow-800 mb-2">ملاحظات قانونية</h2>
+                <ul class="list-disc list-inside text-gray-700 space-y-2">
+                    <li>تُحسب مكافأة نهاية الخدمة وفقاً للمادة 84 من نظام العمل السعودي.</li>
+                    <li>في حال الإنهاء من قبل صاحب العمل أو انتهاء العقد، يستحق العامل المكافأة كاملة.</li>
+                    <li>في حال الاستقالة، تختلف النسبة المستحقة حسب مدة الخدمة:
+                        <ul class="list-disc list-inside mr-6 mt-1">
+                            <li>إذا استقال العامل قبل إكمال سنتين من الخدمة، لا يستحق المكافأة.</li>
+                            <li>إذا استقال العامل بعد خدمة لا تقل عن سنتين ولا تزيد عن خمس سنوات، يستحق ثلث المكافأة.</li>
+                            <li>إذا استقال بعد خدمة لا تقل عن خمس سنوات ولا تزيد عن عشر سنوات، يستحق ثلثي المكافأة.</li>
+                            <li>إذا استقال بعد خدمة لا تقل عن عشر سنوات، يستحق المكافأة كاملة.</li>
+                        </ul>
+                    </li>
+                    <li>يتم احتساب المكافأة على أساس آخر أجر يتقاضاه العامل.</li>
+                    <li>يتم حساب المستحق عن كسور السنة بنسبة ما قضاه منها في العمل.</li>
+                </ul>
+                <p class="mt-4 text-red-600 font-bold">تنبيه هام: هذه الحاسبة للأغراض التوضيحية فقط، ولا تعتبر بديلاً عن الاستشارة القانونية المتخصصة.</p>
+            </div>
+        </section>
+
+        <footer class="text-center text-gray-600 pt-4 border-t border-gray-200">
+            <div class="developer">
+
+                <i class="fas fa-code dev-icon"></i><br><p>تم التطوير بواسطة عبدالله أحمد العامري<br>سبحان الله وبحمده، سبحان الله العظيم</p>
+
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('calculate').addEventListener('click', function() {
+            // Get input values
+            const salary = parseFloat(document.getElementById('salary').value);
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            const terminationType = document.getElementById('terminationType').value;
+            
+            // Validate inputs
+            if (isNaN(salary) || !startDate || !endDate || salary <= 0) {
+                alert('الرجاء إدخال جميع البيانات المطلوبة بشكل صحيح');
+                return;
+            }
+            
+            if (endDate < startDate) {
+                alert('تاريخ نهاية العمل يجب أن يكون بعد تاريخ بداية العمل');
+                return;
+            }
+            
+            // Calculate duration
+            const diffTime = Math.abs(endDate - startDate);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            const years = Math.floor(diffDays / 365);
+            const months = Math.floor((diffDays % 365) / 30);
+            const days = Math.floor((diffDays % 365) % 30);
+            
+            // Update service duration display
+            document.getElementById('yearsOfService').textContent = years;
+            document.getElementById('monthsOfService').textContent = months;
+            document.getElementById('daysOfService').textContent = days;
+            
+            // Calculate total service in years (including fractional parts)
+            const totalServiceYears = years + (months / 12) + (days / 365);
+            
+            // Calculate base EOS benefit
+            let eosAmount = 0;
+            let calculationDetails = '';
+            
+            // First 5 years: half month salary per year
+            const firstFiveYears = Math.min(5, totalServiceYears);
+            const firstFiveYearsAmount = (salary / 2) * firstFiveYears;
+            
+            // Remaining years: full month salary per year
+            const remainingYears = Math.max(0, totalServiceYears - 5);
+            const remainingYearsAmount = salary * remainingYears;
+            
+            // Total base amount
+            const baseAmount = firstFiveYearsAmount + remainingYearsAmount;
+            
+            // Apply termination type rules
+            let finalAmount = baseAmount;
+            let reductionFactor = 1;
+            let reductionExplanation = '';
+            
+            if (terminationType === 'resignation') {
+                if (totalServiceYears < 2) {
+                    reductionFactor = 0;
+                    reductionExplanation = 'لا يستحق المكافأة (مدة الخدمة أقل من سنتين)';
+                } else if (totalServiceYears < 5) {
+                    reductionFactor = 1/3;
+                    reductionExplanation = 'يستحق ثلث المكافأة (مدة الخدمة بين سنتين و5 سنوات)';
+                } else if (totalServiceYears < 10) {
+                    reductionFactor = 2/3;
+                    reductionExplanation = 'يستحق ثلثي المكافأة (مدة الخدمة بين 5 و10 سنوات)';
+                } else {
+                    reductionFactor = 1;
+                    reductionExplanation = 'يستحق المكافأة كاملة (مدة الخدمة 10 سنوات أو أكثر)';
+                }
+                
+                finalAmount = baseAmount * reductionFactor;
+            }
+            
+            // Generate calculation details
+            calculationDetails = `
+                <div class="space-y-4">
+                    <p><strong>1. حساب مدة الخدمة:</strong> ${years} سنة، ${months} شهر، ${days} يوم</p>
+                    
+                    <p><strong>2. حساب المكافأة الأساسية:</strong></p>
+                    <ul class="list-disc list-inside mr-6">
+                        <li>الخمس سنوات الأولى: ${firstFiveYears.toFixed(2)} × ${(salary/2).toFixed(2)} = ${firstFiveYearsAmount.toFixed(2)} ريال</li>
+                        <li>السنوات المتبقية: ${remainingYears.toFixed(2)} × ${salary.toFixed(2)} = ${remainingYearsAmount.toFixed(2)} ريال</li>
+                        <li>إجمالي المكافأة الأساسية: ${baseAmount.toFixed(2)} ريال</li>
+                    </ul>
+                    
+                    <p><strong>3. تعديل المكافأة حسب نوع إنهاء العقد:</strong></p>
+                    <ul class="list-disc list-inside mr-6">
+                        <li>نوع الإنهاء: ${terminationType === 'employer' ? 'إنهاء من قبل صاحب العمل / عدم تجديد العقد' : 'استقالة'}</li>
+                        ${terminationType === 'resignation' ? `<li>${reductionExplanation}</li>` : '<li>يستحق المكافأة كاملة</li>'}
+                        <li>معامل التخفيض: ${reductionFactor}</li>
+                        <li>المكافأة النهائية: ${baseAmount.toFixed(2)} × ${reductionFactor} = ${finalAmount.toFixed(2)} ريال</li>
+                    </ul>
+                </div>
+            `;
+            
+            document.getElementById('calculationDetails').innerHTML = calculationDetails;
+            document.getElementById('totalEOS').textContent = `${finalAmount.toFixed(2)} ريال`;
+            document.getElementById('results').classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
